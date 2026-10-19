@@ -42,12 +42,3 @@ Déjala abierta también. Debe decir `Web en http://localhost:5000`.
 3. Muévete con **WASD** o las flechas y recoge las monedas.
 4. Guarda tu puntaje pisando la plataforma verde, presionando **G** o haciendo clic en **Guardar puntaje**.
 
-## ¿Problemas?
-
-- **Windows dice "la ejecución de scripts está deshabilitada"**: usa `npm.cmd install` y `npm.cmd start`, o ejecuta los comandos en el Símbolo del sistema (`cmd`) en lugar de PowerShell.
-- **"No se pudo conectar con la API"**: verifica que la terminal del paso 2 siga abierta.
-- **La página no carga**: ábrela desde `http://localhost:5000`, no dando doble clic a los archivos HTML.
-
-## Editar el juego (opcional)
-
-Abre la carpeta `unity` con Unity Hub (**Add → Add project from disk**). Después de hacer cambios, compila para WebGL en `web/public/unity/`.
