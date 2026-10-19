@@ -1,0 +1,12 @@
+{
+  "name": "game-web",
+  "version": "1.0.0",
+  "description": "Login web y página del videojuego (Unity WebGL)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

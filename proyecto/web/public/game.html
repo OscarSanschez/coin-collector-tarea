@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jugar · Coin Collector</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+</head>
+<body>
+<!--
+  ===================== API NECESARIA PARA EL VIDEOJUEGO =====================
+  Servidor API (proyecto /api):  http://localhost:4000      (puerto 4000)
+  Headers:                       Content-Type: application/json
+
+  ruta get:  http://localhost:4000/game/user_id
+      body:  (ninguno)
+  respuesta: {id, name, points}
+
+  ruta put:  http://localhost:4000/game/user_id
+      body:  {points}
+  respuesta: {id, name, points}
+
+  (usadas por el login web, no por el juego)
+  ruta post: http://localhost:4000/auth/login       body: {name, password}  -> {id, name, points}
+  ruta post: http://localhost:4000/auth/register    body: {name, password}  -> {id, name, points}
+
+  Cómo recibe el juego el ID:
+    Esta página carga el build WebGL en un iframe:
+        unity/index.html?user_id=<ID>
+    En Unity, Application.absoluteURL devuelve esa URL y el script
+    UrlParams.cs extrae el parámetro "user_id".
+  ===========================================================================
+-->
+  <header class="topbar">
+    <div class="who">Jugador: <span id="userName">…</span> · ID <span id="userId">…</span></div>
+    <div class="who">Puntos guardados: <span id="dbPoints">…</span></div>
+    <button class="btn ghost" id="logout" type="button">Cerrar sesión</button>
+  </header>
+
+  <div class="game-wrap">
+    <!-- El src se arma con el ID del usuario: unity/index.html?user_id=ID -->
+    <iframe id="gameFrame" class="game-frame" title="Videojuego Coin Collector" allow="fullscreen"></iframe>
+  </div>
+  <p class="hint">Muévete con WASD o flechas · Recoge monedas · Pisa la plataforma verde o presiona G para guardar</p>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const userId = params.get('user_id') || sessionStorage.getItem('user_id');
+
+    if (!userId) {
+      location.replace('index.html'); // sin sesión, volver al login
+    } else {
+      document.getElementById('userId').textContent = userId;
+      // >>> El ID del usuario se incluye en la URL del iframe <<<
+      document.getElementById('gameFrame').src = `unity/index.html?user_id=${encodeURIComponent(userId)}`;
+      refreshUser();
+      setInterval(refreshUser, 4000); // refleja en la barra lo que el juego guarda
+    }
+
+    async function refreshUser() {
+      try {
+        const res = await fetch(`${API_URL}/game/${encodeURIComponent(userId)}`);
+        if (!res.ok) throw new Error();
+        const u = await res.json();
+        document.getElementById('userName').textContent = u.name;
+        document.getElementById('dbPoints').textContent = u.points;
+      } catch {
+        document.getElementById('dbPoints').textContent = 'sin conexión';
+      }
+    }
+
+    document.getElementById('logout').onclick = () => {
+      sessionStorage.clear();
+      location.href = 'index.html';
+    };
+  </script>
+</body>
+</html>
